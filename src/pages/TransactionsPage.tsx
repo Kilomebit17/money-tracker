@@ -1,5 +1,6 @@
 import type { ChangeEvent, FormEvent } from "react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useFinance } from "../providers/FinanceProvider";
 import { useExchangeRates } from "../hooks/useExchangeRates";
 import TransactionForm, {
@@ -10,6 +11,7 @@ import { convertCurrency } from "../utils/currency";
 const today = new Date().toISOString().split("T")[0];
 
 const TransactionsPage = () => {
+  const navigate = useNavigate();
   const { setTransactions, categories } = useFinance();
   const { rates, loading } = useExchangeRates();
   const [transactionForm, setTransactionForm] = useState<TransactionFormState>(
@@ -80,6 +82,7 @@ const TransactionsPage = () => {
       note: "",
       date: today,
     }));
+    navigate("/");
   };
 
   useEffect(() => {

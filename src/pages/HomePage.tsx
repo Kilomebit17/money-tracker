@@ -2,6 +2,7 @@ import { useFinance } from "../providers/FinanceProvider";
 import { useExchangeRates } from "../hooks/useExchangeRates";
 import BalanceCard from "../components/BalanceCard";
 import TransactionList from "../components/TransactionList";
+import GreetingHeader from "../components/GreetingHeader";
 import { convertCurrency, currencyOrder, formatCurrency } from "../utils/currency";
 
 const HomePage = () => {
@@ -78,25 +79,9 @@ const HomePage = () => {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
 
-  const currentHour = new Date().getHours();
-  const greeting = currentHour < 12 ? "Good Morning" : currentHour < 18 ? "Good Afternoon" : "Good Evening";
-  const username = "User"; // TODO: Get from user settings or context
-
   return (
     <div className="overview-page">
-      <div className="greeting-header">
-        <div className="greeting-header__content">
-          <span className="greeting-header__greeting">{greeting}</span>
-          <span className="greeting-header__username">{username}</span>
-        </div>
-        <div className="greeting-header__avatar">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="20" cy="20" r="20" fill="rgba(255, 255, 255, 0.1)"/>
-            <circle cx="20" cy="16" r="6" fill="rgba(255, 255, 255, 0.6)"/>
-            <path d="M8 32C8 26 13 22 20 22C27 22 32 26 32 32" stroke="rgba(255, 255, 255, 0.6)" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
-        </div>
-      </div>
+      <GreetingHeader />
       <BalanceCard
         primaryCurrency={primaryCurrency}
         primaryAmount={balancePrimary}

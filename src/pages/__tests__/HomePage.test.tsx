@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { FinanceProvider } from '../../providers/FinanceProvider'
+import { TelegramProvider } from '../../providers/TelegramProvider'
 import HomePage from '../HomePage'
 import type { Transaction } from '../../types/finance'
 import * as useExchangeRatesModule from '../../hooks/useExchangeRates'
@@ -45,9 +46,11 @@ const mockTransactions: Transaction[] = [
 const renderHomePage = () => {
   return render(
     <BrowserRouter>
-      <FinanceProvider>
-        <HomePage />
-      </FinanceProvider>
+      <TelegramProvider>
+        <FinanceProvider>
+          <HomePage />
+        </FinanceProvider>
+      </TelegramProvider>
     </BrowserRouter>
   )
 }

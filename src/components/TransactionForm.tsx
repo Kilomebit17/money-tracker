@@ -70,19 +70,6 @@ const TransactionForm = ({
         <h1 className={`transaction-page__title ${formState.type === 'expense' ? 'transaction-page__title--expense' : formState.type === 'income' ? 'transaction-page__title--income' : ''}`}>
           {formState.type === 'income' ? 'New Income' : 'New Expense'}
         </h1>
-        <button
-          type="button"
-          className={`transaction-page__save ${formState.type === 'expense' ? 'transaction-page__save--expense' : formState.type === 'income' ? 'transaction-page__save--income' : ''}`}
-          onClick={(e) => {
-            const form = e.currentTarget.closest('form')
-            if (form) {
-              form.requestSubmit()
-            }
-          }}
-          disabled={loading}
-        >
-          {loading ? 'Saving...' : 'Save'}
-        </button>
       </div>
 
       <form onSubmit={onSubmit} className="transaction-form-new">
@@ -198,6 +185,14 @@ const TransactionForm = ({
               />
             </label>
           </div>
+
+          <button
+            type="submit"
+            className={`transaction-page__save transaction-page__save--bottom ${formState.type === 'expense' ? 'transaction-page__save--expense' : formState.type === 'income' ? 'transaction-page__save--income' : ''}`}
+            disabled={loading}
+          >
+            {loading ? 'Saving...' : 'Save'}
+          </button>
         </div>
       </form>
     </div>
