@@ -691,7 +691,13 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
   margin-bottom: 2rem;
+}
+
+.transaction-page__header .transaction-page__title {
+  flex: 1;
+  text-align: center;
 }
 
 .transaction-page__title {
@@ -1083,6 +1089,130 @@ body::after {
   font-weight: 600;
   font-size: 0.9375rem;
   letter-spacing: -0.01em;
+}
+
+.transaction-list__item--clickable {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.transaction-list__item--clickable:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  margin: 0 -0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.transaction-list__item--clickable:focus {
+  outline: 2px solid rgba(94, 234, 212, 0.5);
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+.transaction-page__back-button {
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-color);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.transaction-page__back-button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateX(-2px);
+}
+
+.transaction-page__back-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.transaction-page__delete-button {
+  border: none;
+  background: rgba(248, 113, 113, 0.15);
+  color: rgba(248, 113, 113, 1);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.transaction-page__delete-button:hover {
+  background: rgba(248, 113, 113, 0.25);
+  transform: scale(1.05);
+}
+
+.transaction-page__delete-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.transaction-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.transaction-detail__amount-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.transaction-detail__amount-display {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.transaction-detail__amount-sign {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.transaction-detail__amount-value {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.transaction-detail__type-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.transaction-detail__type-icon--income {
+  color: #4ade80;
+}
+
+.transaction-detail__type-icon--expense {
+  color: #f87171;
+}
+
+.transaction-form-new__field-display--multiline {
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 0.5rem 0;
+  line-height: 1.5;
 }
 
 .category-form form {

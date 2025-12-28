@@ -12,6 +12,7 @@ const defaultCategories: Category[] = [
   { id: "clothing", name: "Clothing and Shoes", color: "#ec4899", icon: "👕" },
   { id: "health", name: "Health", color: "#10b981", icon: "🏥" },
   { id: "entertainment", name: "Entertainment", color: "#22d3ee", icon: "🎬" },
+  { id: "gifts", name: "Gifts", color: "#f472b6", icon: "🎁" },
   { id: "rent", name: "Rent", color: "#a855f7", icon: "🏠" },
   { id: "travel", name: "Travel", color: "#06b6d4", icon: "✈️" },
   { id: "invests", name: "Invests", color: "#22d3ee", icon: "📈" },

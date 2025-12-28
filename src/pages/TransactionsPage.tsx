@@ -16,7 +16,7 @@ const TransactionsPage = () => {
   const { rates, loading } = useExchangeRates();
   const [transactionForm, setTransactionForm] = useState<TransactionFormState>(
     () => ({
-      type: "income",
+      type: "expense",
       amount: "0",
       currency: "UAH",
       categoryId: categories[0]?.id || "",

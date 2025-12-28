@@ -19,7 +19,7 @@ describe('FinanceProvider', () => {
   it('should provide default categories', () => {
     const { result } = renderHook(() => useFinance(), { wrapper })
 
-    expect(result.current.categories).toHaveLength(12)
+    expect(result.current.categories).toHaveLength(13)
     expect(result.current.categories[0].id).toBe('salary')
     expect(result.current.categories[0].name).toBe('Salary')
   })
