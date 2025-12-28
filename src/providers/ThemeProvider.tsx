@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo } from 'react'
 import type { ReactElement, ReactNode } from 'react'
 
 type Theme = 'light' | 'dark'
@@ -11,10 +11,6 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
 
 const LOCAL_STORAGE_KEY = 'my-finance-theme'
-
-const getInitialTheme = (): Theme => {
-  return 'dark'
-}
 
 interface ThemeProviderProps {
   children: ReactNode
