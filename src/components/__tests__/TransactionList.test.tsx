@@ -1,9 +1,12 @@
 import type { ReactElement } from 'react'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
+import { TelegramProvider } from '../../providers/TelegramProvider'
 import TransactionList from '../TransactionList'
 import type { Transaction, Category, Currency } from '../../types/finance'
+import type { ITelegramWebApp } from '../../types/telegram'
 
 const mockCategories: Category[] = [
   { id: 'food', name: 'Food', color: '#fb7185', icon: '🍎' },
@@ -48,11 +51,43 @@ const defaultProps = {
   rates: mockRates,
 }
 
-const renderWithRouter = (component: ReactElement) => {
-  return render(<MemoryRouter>{component}</MemoryRouter>)
+const createMockWebApp = (): ITelegramWebApp => ({
+  HapticFeedback: {
+    impactOccurred: vi.fn(),
+    notificationOccurred: vi.fn(),
+    selectionChanged: vi.fn(),
+  },
+  ready: vi.fn(),
+  expand: vi.fn(),
+  setBackgroundColor: vi.fn(),
+  setHeaderColor: vi.fn(),
+  onEvent: vi.fn(),
+  offEvent: vi.fn(),
+  themeParams: {},
+} as unknown as ITelegramWebApp)
+
+const renderWithRouter = (component: ReactElement, mockWebApp?: ITelegramWebApp | null) => {
+  if (mockWebApp) {
+    ;(window as Window & { Telegram?: { WebApp: ITelegramWebApp } }).Telegram = {
+      WebApp: mockWebApp,
+    }
+  } else {
+    delete (window as Partial<Window>).Telegram
+  }
+
+  return render(
+    <MemoryRouter>
+      <TelegramProvider>{component}</TelegramProvider>
+    </MemoryRouter>
+  )
 }
 
 describe('TransactionList', () => {
+  beforeEach(() => {
+    delete (window as Partial<Window>).Telegram
+    vi.clearAllMocks()
+  })
+
   it('should render transaction list header', () => {
     renderWithRouter(<TransactionList {...defaultProps} />)
 
@@ -161,6 +196,50 @@ describe('TransactionList', () => {
 
     expect(screen.getByText('Food')).toBeInTheDocument()
     expect(screen.getByText(/-/)).toBeInTheDocument()
+  })
+
+  it('should trigger haptic feedback when transaction is clicked in Telegram', async () => {
+    const user = userEvent.setup()
+    const mockWebApp = createMockWebApp()
+    const impactSpy = vi.spyOn(mockWebApp.HapticFeedback, 'impactOccurred')
+    renderWithRouter(<TransactionList {...defaultProps} />, mockWebApp)
+
+    const transactionItem = screen.getByText('Salary').closest('li')
+    expect(transactionItem).toBeInTheDocument()
+    
+    if (transactionItem) {
+      await user.click(transactionItem)
+      expect(impactSpy).toHaveBeenCalledTimes(1)
+      expect(impactSpy).toHaveBeenCalledWith('light')
+    }
+  })
+
+  it('should show "View all" button when showViewAll is true', () => {
+    renderWithRouter(<TransactionList {...defaultProps} showViewAll={true} />)
+
+    expect(screen.getByText('View all')).toBeInTheDocument()
+  })
+
+  it('should trigger haptic feedback when "View all" button is clicked in Telegram', async () => {
+    const user = userEvent.setup()
+    const mockWebApp = createMockWebApp()
+    const selectionSpy = vi.spyOn(mockWebApp.HapticFeedback, 'selectionChanged')
+    renderWithRouter(
+      <TransactionList {...defaultProps} showViewAll={true} />,
+      mockWebApp
+    )
+
+    const viewAllButton = screen.getByText('View all')
+    await user.click(viewAllButton)
+
+    expect(selectionSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('should use custom title when provided', () => {
+    renderWithRouter(<TransactionList {...defaultProps} title="All Transactions" />)
+
+    expect(screen.getByText('All Transactions')).toBeInTheDocument()
+    expect(screen.queryByText('Recent Transactions')).not.toBeInTheDocument()
   })
 })
 

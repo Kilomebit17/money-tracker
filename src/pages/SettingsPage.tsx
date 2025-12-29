@@ -3,9 +3,12 @@ import { useFinance } from "../providers/FinanceProvider";
 // import { useExchangeRates } from "../hooks/useExchangeRates";
 import { currencyOrder } from "../utils/currency";
 import type { Currency } from "../types/finance";
+import { useTelegram } from "../providers/TelegramProvider";
+import { triggerHaptic } from "../utils/haptic";
 
 const SettingsPage = (): ReactElement => {
   const { primaryCurrency, setPrimaryCurrency } = useFinance();
+  const { webApp } = useTelegram();
   // const { loading, refresh } = useExchangeRates();
 
   return (
@@ -27,9 +30,10 @@ const SettingsPage = (): ReactElement => {
             <select
               className="settings-item__select"
               value={primaryCurrency}
-              onChange={(event) =>
+              onChange={(event) => {
+                triggerHaptic(webApp, 'selection')
                 setPrimaryCurrency(event.target.value as Currency)
-              }
+              }}
             >
               {currencyOrder.map((currency) => (
                 <option key={currency} value={currency}>

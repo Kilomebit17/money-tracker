@@ -1,17 +1,24 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { TelegramProvider } from '../../providers/TelegramProvider'
 import BottomNav from '../BottomNav'
 
 const renderWithRouter = (initialEntries: string[] = ['/']) => {
   return render(
     <MemoryRouter initialEntries={initialEntries}>
-      <BottomNav />
+      <TelegramProvider>
+        <BottomNav />
+      </TelegramProvider>
     </MemoryRouter>
   )
 }
 
 describe('BottomNav', () => {
+  beforeEach(() => {
+    delete (window as Partial<Window>).Telegram
+  })
+
   it('should render navigation links', () => {
     renderWithRouter()
 
@@ -23,49 +30,37 @@ describe('BottomNav', () => {
   it('should highlight active route', () => {
     renderWithRouter(['/'])
 
-    const overviewLink = screen.getByText('Overview').closest('a')
-    expect(overviewLink).toHaveClass('bottom-nav__item--active')
-    expect(overviewLink).toHaveAttribute('aria-pressed', 'true')
+    const overviewButton = screen.getByText('Overview').closest('button')
+    expect(overviewButton).toHaveClass('bottom-nav__item--active')
+    expect(overviewButton).toHaveAttribute('aria-pressed', 'true')
   })
 
   it('should highlight transactions route when active', () => {
     renderWithRouter(['/transactions'])
 
-    const transactionsLink = screen.getByText('Transactions').closest('a')
-    expect(transactionsLink).toHaveClass('bottom-nav__item--active')
-    expect(transactionsLink).toHaveAttribute('aria-pressed', 'true')
+    const transactionsButton = screen.getByText('Transactions').closest('button')
+    expect(transactionsButton).toHaveClass('bottom-nav__item--active')
+    expect(transactionsButton).toHaveAttribute('aria-pressed', 'true')
   })
 
   it('should highlight settings route when active', () => {
     renderWithRouter(['/settings'])
 
-    const settingsLink = screen.getByText('Settings').closest('a')
-    expect(settingsLink).toHaveClass('bottom-nav__item--active')
-    expect(settingsLink).toHaveAttribute('aria-pressed', 'true')
+    const settingsButton = screen.getByText('Settings').closest('button')
+    expect(settingsButton).toHaveClass('bottom-nav__item--active')
+    expect(settingsButton).toHaveAttribute('aria-pressed', 'true')
   })
 
   it('should not highlight inactive routes', () => {
     renderWithRouter(['/'])
 
-    const transactionsLink = screen.getByText('Transactions').closest('a')
-    const settingsLink = screen.getByText('Settings').closest('a')
+    const transactionsButton = screen.getByText('Transactions').closest('button')
+    const settingsButton = screen.getByText('Settings').closest('button')
 
-    expect(transactionsLink).not.toHaveClass('bottom-nav__item--active')
-    expect(settingsLink).not.toHaveClass('bottom-nav__item--active')
-    expect(transactionsLink).toHaveAttribute('aria-pressed', 'false')
-    expect(settingsLink).toHaveAttribute('aria-pressed', 'false')
-  })
-
-  it('should have correct href attributes', () => {
-    renderWithRouter()
-
-    const overviewLink = screen.getByText('Overview').closest('a')
-    const transactionsLink = screen.getByText('Transactions').closest('a')
-    const settingsLink = screen.getByText('Settings').closest('a')
-
-    expect(overviewLink).toHaveAttribute('href', '/')
-    expect(transactionsLink).toHaveAttribute('href', '/transactions')
-    expect(settingsLink).toHaveAttribute('href', '/settings')
+    expect(transactionsButton).not.toHaveClass('bottom-nav__item--active')
+    expect(settingsButton).not.toHaveClass('bottom-nav__item--active')
+    expect(transactionsButton).toHaveAttribute('aria-pressed', 'false')
+    expect(settingsButton).toHaveAttribute('aria-pressed', 'false')
   })
 
   it('should render icons', () => {

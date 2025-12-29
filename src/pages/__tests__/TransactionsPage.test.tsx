@@ -16,18 +16,23 @@ const mockRates = {
   UAH: 37.1,
 }
 
+import { TelegramProvider } from '../../providers/TelegramProvider'
+
 const renderTransactionsPage = () => {
   return render(
     <BrowserRouter>
-      <FinanceProvider>
-        <TransactionsPage />
-      </FinanceProvider>
+      <TelegramProvider>
+        <FinanceProvider>
+          <TransactionsPage />
+        </FinanceProvider>
+      </TelegramProvider>
     </BrowserRouter>
   )
 }
 
 describe('TransactionsPage', () => {
   beforeEach(() => {
+    delete (window as Partial<Window>).Telegram
     vi.clearAllMocks()
     localStorage.clear()
     ;(useExchangeRatesModule.useExchangeRates as ReturnType<typeof vi.fn>).mockReturnValue({

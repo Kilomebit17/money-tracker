@@ -1393,6 +1393,8 @@ body::after {
   cursor: pointer;
   transition: all 0.2s ease;
   min-width: 100px;
+  appearance: none;
+  color-scheme: dark;
 }
 
 .settings-item__select:hover {
@@ -1404,6 +1406,12 @@ body::after {
   outline: none;
   border-color: rgba(56, 189, 248, 0.5);
   background: rgba(255, 255, 255, 0.12);
+}
+
+.settings-item__select option {
+  background: rgb(18, 22, 35);
+  color: var(--text-color);
+  padding: 0.5rem;
 }
 
 .settings-item__button {

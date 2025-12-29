@@ -1,6 +1,8 @@
-import { Link, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import type { ReactElement } from "react";
 import { HiHome, HiDocumentText, HiCog6Tooth } from "react-icons/hi2";
+import { useTelegram } from "../providers/TelegramProvider";
+import { triggerHaptic } from "../utils/haptic";
 
 const navigation: Array<{ path: string; label: string; icon: ReactElement }> = [
   { path: "/", label: "Overview", icon: <HiHome /> },
@@ -11,6 +13,15 @@ const navigation: Array<{ path: string; label: string; icon: ReactElement }> = [
 
 const BottomNav = (): ReactElement => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { webApp } = useTelegram();
+
+  const handleNavClick = (path: string) => {
+    if (location.pathname !== path) {
+      triggerHaptic(webApp, 'selection')
+      navigate(path)
+    }
+  };
 
   return (
     <nav className="bottom-nav">
@@ -18,15 +29,16 @@ const BottomNav = (): ReactElement => {
         const isActive = location.pathname === nav.path;
 
         return (
-          <Link
+          <button
             key={nav.path}
-            to={nav.path}
+            type="button"
+            onClick={() => handleNavClick(nav.path)}
             className={`bottom-nav__item ${isActive ? "bottom-nav__item--active" : ""}`}
             aria-pressed={isActive}
           >
             <span className="bottom-nav__icon">{nav.icon}</span>
             <span className="bottom-nav__label">{nav.label}</span>
-          </Link>
+          </button>
         );
       })}
     </nav>

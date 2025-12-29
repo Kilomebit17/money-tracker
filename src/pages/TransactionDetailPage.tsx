@@ -7,6 +7,7 @@ import { HiArrowUp } from 'react-icons/hi2';
 import { HiArrowDown } from 'react-icons/hi2';
 import { HiTrash } from 'react-icons/hi2';
 import { HiArrowLeft } from 'react-icons/hi2';
+import { triggerHaptic } from '../utils/haptic';
 
 const TransactionDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,7 +23,10 @@ const TransactionDetailPage = () => {
         <div className="transaction-page__header">
           <button
             type="button"
-            onClick={() => navigate('/')}
+            onClick={() => {
+              triggerHaptic(webApp, 'impact', 'light')
+              navigate('/')
+            }}
             className="transaction-page__back-button"
             aria-label="Go back"
           >
@@ -49,6 +53,7 @@ const TransactionDetailPage = () => {
       return;
     }
 
+    triggerHaptic(webApp, 'impact', 'medium')
     setTransactions((prev) =>
       prev.map((tx) => (tx.id === transaction.id ? { ...tx, type: newType } : tx))
     );
@@ -60,11 +65,13 @@ const TransactionDetailPage = () => {
     if (webApp?.showConfirm) {
       webApp.showConfirm(confirmMessage, (confirmed: boolean) => {
         if (confirmed) {
+          triggerHaptic(webApp, 'notification', 'success')
           setTransactions((prev) => prev.filter((tx) => tx.id !== transaction.id));
           navigate('/');
         }
       });
     } else if (window.confirm(confirmMessage)) {
+      triggerHaptic(webApp, 'notification', 'success')
       setTransactions((prev) => prev.filter((tx) => tx.id !== transaction.id));
       navigate('/');
     }
@@ -75,7 +82,10 @@ const TransactionDetailPage = () => {
       <div className="transaction-page__header">
         <button
           type="button"
-          onClick={() => navigate('/')}
+          onClick={() => {
+            triggerHaptic(webApp, 'impact', 'light')
+            navigate('/')
+          }}
           className="transaction-page__back-button"
           aria-label="Go back"
         >

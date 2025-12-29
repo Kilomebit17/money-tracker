@@ -1,6 +1,8 @@
 import { useRef } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
 import type { Category, Currency, TransactionType } from '../types/finance'
+import { useTelegram } from '../providers/TelegramProvider'
+import { triggerHaptic } from '../utils/haptic'
 
 interface TransactionFormState {
   type: TransactionType
@@ -28,18 +30,22 @@ const TransactionForm = ({
   onAmountBlur,
   loading
 }: TransactionFormProps) => {
+  const { webApp } = useTelegram()
   const dateInputRef = useRef<HTMLInputElement>(null)
   const selectRef = useRef<HTMLSelectElement>(null)
 
   const handleDateFieldClick = () => {
+    triggerHaptic(webApp, 'selection')
     dateInputRef.current?.showPicker?.() || dateInputRef.current?.click()
   }
 
   const handleSelectFieldClick = () => {
+    triggerHaptic(webApp, 'selection')
     selectRef.current?.click()
   }
 
   const handleTypeChange = (type: TransactionType) => {
+    triggerHaptic(webApp, 'impact', 'medium')
     const syntheticEvent = {
       target: { name: 'type', value: type }
     } as ChangeEvent<HTMLInputElement>
@@ -47,6 +53,7 @@ const TransactionForm = ({
   }
 
   const handleCurrencyChange = (currency: Currency) => {
+    triggerHaptic(webApp, 'selection')
     const syntheticEvent = {
       target: { name: 'currency', value: currency }
     } as ChangeEvent<HTMLSelectElement>

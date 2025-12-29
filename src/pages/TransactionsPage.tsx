@@ -1,6 +1,6 @@
 import type { ChangeEvent, FormEvent } from "react";
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useFinance } from "../providers/FinanceProvider";
 import { useExchangeRates } from "../hooks/useExchangeRates";
 import TransactionForm, {
@@ -8,18 +8,24 @@ import TransactionForm, {
 } from "../components/TransactionForm";
 import { convertCurrency } from "../utils/currency";
 import type { TransactionType } from "../types/finance";
+import { useTelegram } from "../providers/TelegramProvider";
+import { triggerHaptic } from "../utils/haptic";
 
 const today = new Date().toISOString().split("T")[0];
 
+interface LocationState {
+  type?: TransactionType;
+}
+
 const TransactionsPage = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { setTransactions, categories } = useFinance();
   const { rates, loading } = useExchangeRates();
+  const { webApp } = useTelegram();
   
-  const transactionTypeFromUrl = searchParams.get("type");
-  const initialType: TransactionType = 
-    transactionTypeFromUrl === "income" ? "income" : "expense";
+  const locationState = location.state as LocationState | null;
+  const initialType: TransactionType = locationState?.type === "income" ? "income" : "expense";
   
   const [transactionForm, setTransactionForm] = useState<TransactionFormState>(
     () => ({
@@ -62,8 +68,11 @@ const TransactionsPage = () => {
     const parsedAmount = Number(transactionForm.amount.replace(/,/g, ""));
 
     if (!parsedAmount || parsedAmount <= 0) {
+      triggerHaptic(webApp, 'notification', 'error')
       return;
     }
+
+    triggerHaptic(webApp, 'notification', 'success')
 
     const newTransaction = {
       id: `tx-${Date.now()}`,
@@ -91,15 +100,6 @@ const TransactionsPage = () => {
     }));
     navigate("/");
   };
-
-  useEffect(() => {
-    const typeFromUrl = searchParams.get("type");
-    if (typeFromUrl === "income" && transactionForm.type !== "income") {
-      setTransactionForm((prev) => ({ ...prev, type: "income" }));
-    } else if (typeFromUrl === "expense" && transactionForm.type !== "expense") {
-      setTransactionForm((prev) => ({ ...prev, type: "expense" }));
-    }
-  }, [searchParams, transactionForm.type]);
 
   useEffect(() => {
     if (categories.length > 0 && !categories.find((c) => c.id === transactionForm.categoryId)) {

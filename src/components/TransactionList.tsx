@@ -3,6 +3,8 @@ import { formatCurrency } from '../utils/currency'
 import { useNavigate } from 'react-router-dom'
 import { HiArrowUp } from 'react-icons/hi2'
 import { HiArrowDown } from 'react-icons/hi2'
+import { useTelegram } from '../providers/TelegramProvider'
+import { triggerHaptic } from '../utils/haptic'
 
 interface TransactionListProps {
   transactions: Transaction[]
@@ -24,12 +26,15 @@ const TransactionList = ({
   viewAllPath = '/transactions/all'
 }: TransactionListProps) => {
   const navigate = useNavigate()
+  const { webApp } = useTelegram()
 
   const handleTransactionClick = (transactionId: string) => {
+    triggerHaptic(webApp, 'impact', 'light')
     navigate(`/transactions/${transactionId}`)
   }
 
   const handleViewAllClick = () => {
+    triggerHaptic(webApp, 'selection')
     navigate(viewAllPath)
   }
 

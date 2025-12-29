@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { TelegramProvider } from '../../providers/TelegramProvider'
 import TransactionForm, { type TransactionFormState } from '../TransactionForm'
 import type { Category } from '../../types/finance'
 
@@ -28,32 +29,37 @@ const defaultProps = {
   loading: false,
 }
 
+const renderWithProvider = (component: React.ReactElement) => {
+  return render(<TelegramProvider>{component}</TelegramProvider>)
+}
+
 describe('TransactionForm', () => {
   beforeEach(() => {
+    delete (window as Partial<Window>).Telegram
     vi.clearAllMocks()
   })
 
   it('should render transaction form', () => {
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     expect(screen.getByText('New Expense')).toBeInTheDocument()
   })
 
   it('should display income title when type is income', () => {
     const incomeState = { ...defaultFormState, type: 'income' as const }
-    render(<TransactionForm {...defaultProps} formState={incomeState} />)
+    renderWithProvider(<TransactionForm {...defaultProps} formState={incomeState} />)
 
     expect(screen.getByText('New Income')).toBeInTheDocument()
   })
 
   it('should display expense title when type is expense', () => {
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     expect(screen.getByText('New Expense')).toBeInTheDocument()
   })
 
   it('should render amount input with correct value', () => {
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     const amountInput = screen.getByPlaceholderText('0')
     expect(amountInput).toHaveValue('100')
@@ -61,7 +67,7 @@ describe('TransactionForm', () => {
 
   it('should hide amount input when value is 0', () => {
     const zeroState = { ...defaultFormState, amount: '0' }
-    render(<TransactionForm {...defaultProps} formState={zeroState} />)
+    renderWithProvider(<TransactionForm {...defaultProps} formState={zeroState} />)
 
     const amountInput = screen.getByPlaceholderText('0')
     expect(amountInput).toHaveValue('')
@@ -69,7 +75,7 @@ describe('TransactionForm', () => {
 
   it('should call onChange when amount changes', async () => {
     const user = userEvent.setup()
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     const amountInput = screen.getByPlaceholderText('0')
     await user.clear(amountInput)
@@ -80,7 +86,7 @@ describe('TransactionForm', () => {
 
   it('should filter out non-numeric characters from amount', async () => {
     const user = userEvent.setup()
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     const amountInput = screen.getByPlaceholderText('0')
     await user.clear(amountInput)
@@ -91,7 +97,7 @@ describe('TransactionForm', () => {
   })
 
   it('should display currency selector', () => {
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     // USD appears multiple times (in input and button), so use getAllByText
     const usdElements = screen.getAllByText('USD')
@@ -100,7 +106,7 @@ describe('TransactionForm', () => {
 
   it('should call onChange when currency is changed via button', async () => {
     const user = userEvent.setup()
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     const currencyButton = screen.getAllByText('USD')[0] // There might be multiple USD texts
     const currencySelector = currencyButton.closest('button')
@@ -112,7 +118,7 @@ describe('TransactionForm', () => {
   })
 
   it('should render type tabs', () => {
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     expect(screen.getByText('Expense')).toBeInTheDocument()
     expect(screen.getByText('Income')).toBeInTheDocument()
@@ -120,7 +126,7 @@ describe('TransactionForm', () => {
 
   it('should call onChange when type tab is clicked', async () => {
     const user = userEvent.setup()
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     const incomeTab = screen.getByText('Income')
     await user.click(incomeTab)
@@ -129,7 +135,7 @@ describe('TransactionForm', () => {
   })
 
   it('should render category select with categories', () => {
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     const categorySelect = document.querySelector('select[name="categoryId"]')
     
@@ -142,7 +148,7 @@ describe('TransactionForm', () => {
   })
 
   it('should display selected category name', () => {
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     // Food appears in the category display
     const foodElements = screen.getAllByText('Food')
@@ -150,7 +156,7 @@ describe('TransactionForm', () => {
   })
 
   it('should render date input', () => {
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     const dateInput = document.querySelector('input[name="date"]') as HTMLInputElement
     expect(dateInput).toBeInTheDocument()
@@ -158,13 +164,13 @@ describe('TransactionForm', () => {
   })
 
   it('should format date display correctly', () => {
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     expect(screen.getByText('15.01.2024')).toBeInTheDocument()
   })
 
   it('should render note textarea', () => {
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     const noteTextarea = screen.getByPlaceholderText('Add a note...')
     expect(noteTextarea).toBeInTheDocument()
@@ -173,7 +179,7 @@ describe('TransactionForm', () => {
 
   it('should call onChange when note changes', async () => {
     const user = userEvent.setup()
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     const noteTextarea = screen.getByPlaceholderText('Add a note...')
     await user.type(noteTextarea, ' updated')
@@ -183,7 +189,7 @@ describe('TransactionForm', () => {
 
   it('should call onAmountBlur when amount input loses focus', async () => {
     const user = userEvent.setup()
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     const amountInput = screen.getByPlaceholderText('0')
     amountInput.focus()
@@ -193,7 +199,7 @@ describe('TransactionForm', () => {
   })
 
   it('should call onSubmit when form is submitted', async () => {
-    render(<TransactionForm {...defaultProps} />)
+    renderWithProvider(<TransactionForm {...defaultProps} />)
 
     // Submit the form directly to test onSubmit is called
     const form = document.querySelector('form')
@@ -214,20 +220,20 @@ describe('TransactionForm', () => {
   })
 
   it('should disable save button when loading', () => {
-    render(<TransactionForm {...defaultProps} loading={true} />)
+    renderWithProvider(<TransactionForm {...defaultProps} loading={true} />)
 
     const saveButton = screen.getByText('Saving...')
     expect(saveButton).toBeDisabled()
   })
 
   it('should show "Saving..." text when loading', () => {
-    render(<TransactionForm {...defaultProps} loading={true} />)
+    renderWithProvider(<TransactionForm {...defaultProps} loading={true} />)
 
     expect(screen.getByText('Saving...')).toBeInTheDocument()
   })
 
   it('should handle empty categories list', () => {
-    render(<TransactionForm {...defaultProps} categories={[]} />)
+    renderWithProvider(<TransactionForm {...defaultProps} categories={[]} />)
 
     const categorySelect = document.querySelector('select[name="categoryId"]')
     expect(categorySelect).toBeInTheDocument()
@@ -235,7 +241,7 @@ describe('TransactionForm', () => {
 
   it('should display "None" when category is not found', () => {
     const stateWithoutCategory = { ...defaultFormState, categoryId: 'nonexistent' }
-    render(<TransactionForm {...defaultProps} formState={stateWithoutCategory} />)
+    renderWithProvider(<TransactionForm {...defaultProps} formState={stateWithoutCategory} />)
 
     expect(screen.getByText('None')).toBeInTheDocument()
   })

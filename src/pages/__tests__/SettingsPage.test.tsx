@@ -5,18 +5,23 @@ import userEvent from '@testing-library/user-event'
 import { FinanceProvider } from '../../providers/FinanceProvider'
 import SettingsPage from '../SettingsPage'
 
+import { TelegramProvider } from '../../providers/TelegramProvider'
+
 const renderSettingsPage = () => {
   return render(
     <BrowserRouter>
-      <FinanceProvider>
-        <SettingsPage />
-      </FinanceProvider>
+      <TelegramProvider>
+        <FinanceProvider>
+          <SettingsPage />
+        </FinanceProvider>
+      </TelegramProvider>
     </BrowserRouter>
   )
 }
 
 describe('SettingsPage', () => {
   beforeEach(() => {
+    delete (window as Partial<Window>).Telegram
     localStorage.clear()
   })
 

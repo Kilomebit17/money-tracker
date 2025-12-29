@@ -1,10 +1,16 @@
+import type { ReactElement } from 'react'
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
+import { TelegramProvider } from '../../providers/TelegramProvider'
 import Layout from '../Layout'
 
-const renderWithRouter = (component: React.ReactElement) => {
-  return render(<BrowserRouter>{component}</BrowserRouter>)
+const renderWithRouter = (component: ReactElement) => {
+  return render(
+    <BrowserRouter>
+      <TelegramProvider>{component}</TelegramProvider>
+    </BrowserRouter>
+  )
 }
 
 describe('Layout', () => {

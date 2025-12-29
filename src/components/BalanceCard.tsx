@@ -2,6 +2,8 @@ import type { Currency } from '../types/finance'
 import { formatCurrency, convertCurrency } from '../utils/currency'
 import { HiBanknotes, HiPlus } from 'react-icons/hi2'
 import { useNavigate } from 'react-router-dom'
+import { useTelegram } from '../providers/TelegramProvider'
+import { triggerHaptic } from '../utils/haptic'
 
 interface BalanceCardProps {
   primaryCurrency: Currency
@@ -21,11 +23,13 @@ const BalanceCard = ({
   rates,
 }: BalanceCardProps) => {
   const navigate = useNavigate()
+  const { webApp } = useTelegram()
   const usdToUah = convertCurrency(1, 'USD', 'UAH', rates)
   const eurToUah = convertCurrency(1, 'EUR', 'UAH', rates)
 
   const handleAddTransaction = () => {
-    navigate('/transactions?type=income')
+    triggerHaptic(webApp, 'impact', 'medium')
+    navigate('/transactions', { state: { type: 'income' } })
   }
 
   return (
