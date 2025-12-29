@@ -25,7 +25,7 @@ const BalanceCard = ({
   const eurToUah = convertCurrency(1, 'EUR', 'UAH', rates)
 
   const handleAddTransaction = () => {
-    navigate('/transactions')
+    navigate('/transactions?type=income')
   }
 
   return (

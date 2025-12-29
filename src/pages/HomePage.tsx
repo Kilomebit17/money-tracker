@@ -95,6 +95,8 @@ const HomePage = () => {
         categories={categories}
         primaryCurrency={primaryCurrency}
         rates={activeRates}
+        showViewAll={true}
+        viewAllPath="/transactions/all"
       />
       {featuredCategories.length > 0 && (
         <article className="category-summary">

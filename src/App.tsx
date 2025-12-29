@@ -7,6 +7,7 @@ import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import TransactionsPage from "./pages/TransactionsPage";
 import TransactionDetailPage from "./pages/TransactionDetailPage";
+import AllTransactionsPage from "./pages/AllTransactionsPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import SettingsPage from "./pages/SettingsPage";
 
@@ -20,6 +21,7 @@ function App(): ReactElement {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/transactions" element={<TransactionsPage />} />
+                <Route path="/transactions/all" element={<AllTransactionsPage />} />
                 <Route path="/transactions/:id" element={<TransactionDetailPage />} />
                 <Route path="/categories" element={<CategoriesPage />} />
                 <Route path="/settings" element={<SettingsPage />} />

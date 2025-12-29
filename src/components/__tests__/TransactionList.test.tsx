@@ -1,5 +1,7 @@
+import type { ReactElement } from 'react'
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import TransactionList from '../TransactionList'
 import type { Transaction, Category, Currency } from '../../types/finance'
 
@@ -46,36 +48,40 @@ const defaultProps = {
   rates: mockRates,
 }
 
+const renderWithRouter = (component: ReactElement) => {
+  return render(<MemoryRouter>{component}</MemoryRouter>)
+}
+
 describe('TransactionList', () => {
   it('should render transaction list header', () => {
-    render(<TransactionList {...defaultProps} />)
+    renderWithRouter(<TransactionList {...defaultProps} />)
 
     expect(screen.getByText('Recent Transactions')).toBeInTheDocument()
   })
 
   it('should render all transactions', () => {
-    render(<TransactionList {...defaultProps} />)
+    renderWithRouter(<TransactionList {...defaultProps} />)
 
     expect(screen.getByText('Salary')).toBeInTheDocument()
     expect(screen.getByText('Food')).toBeInTheDocument()
   })
 
   it('should display transaction amounts with correct format', () => {
-    render(<TransactionList {...defaultProps} />)
+    renderWithRouter(<TransactionList {...defaultProps} />)
 
     expect(screen.getByText(/\+/)).toBeInTheDocument() // Income indicator
     expect(screen.getByText(/-/)).toBeInTheDocument() // Expense indicator
   })
 
   it('should display transaction dates', () => {
-    render(<TransactionList {...defaultProps} />)
+    renderWithRouter(<TransactionList {...defaultProps} />)
 
     const dates = screen.getAllByText(/1\/1[56]\/2024/)
     expect(dates.length).toBeGreaterThan(0)
   })
 
   it('should handle empty transactions array', () => {
-    render(<TransactionList {...defaultProps} transactions={[]} />)
+    renderWithRouter(<TransactionList {...defaultProps} transactions={[]} />)
 
     expect(screen.getByText('Recent Transactions')).toBeInTheDocument()
     // No transaction items should be rendered
@@ -95,7 +101,7 @@ describe('TransactionList', () => {
       exchangeRatesAtEntry: { USD: 1, EUR: 0.93, UAH: 37.1 },
     }
 
-    render(
+    renderWithRouter(
       <TransactionList
         {...defaultProps}
         transactions={[transactionWithoutCategory]}
@@ -120,7 +126,7 @@ describe('TransactionList', () => {
       },
     ]
 
-    render(
+    renderWithRouter(
       <TransactionList
         {...defaultProps}
         transactions={incomeTransactions}
@@ -146,7 +152,7 @@ describe('TransactionList', () => {
       },
     ]
 
-    render(
+    renderWithRouter(
       <TransactionList
         {...defaultProps}
         transactions={expenseTransactions}

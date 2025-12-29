@@ -1,22 +1,29 @@
 import type { ChangeEvent, FormEvent } from "react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useFinance } from "../providers/FinanceProvider";
 import { useExchangeRates } from "../hooks/useExchangeRates";
 import TransactionForm, {
   type TransactionFormState,
 } from "../components/TransactionForm";
 import { convertCurrency } from "../utils/currency";
+import type { TransactionType } from "../types/finance";
 
 const today = new Date().toISOString().split("T")[0];
 
 const TransactionsPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { setTransactions, categories } = useFinance();
   const { rates, loading } = useExchangeRates();
+  
+  const transactionTypeFromUrl = searchParams.get("type");
+  const initialType: TransactionType = 
+    transactionTypeFromUrl === "income" ? "income" : "expense";
+  
   const [transactionForm, setTransactionForm] = useState<TransactionFormState>(
     () => ({
-      type: "expense",
+      type: initialType,
       amount: "0",
       currency: "UAH",
       categoryId: categories[0]?.id || "",
@@ -84,6 +91,15 @@ const TransactionsPage = () => {
     }));
     navigate("/");
   };
+
+  useEffect(() => {
+    const typeFromUrl = searchParams.get("type");
+    if (typeFromUrl === "income" && transactionForm.type !== "income") {
+      setTransactionForm((prev) => ({ ...prev, type: "income" }));
+    } else if (typeFromUrl === "expense" && transactionForm.type !== "expense") {
+      setTransactionForm((prev) => ({ ...prev, type: "expense" }));
+    }
+  }, [searchParams, transactionForm.type]);
 
   useEffect(() => {
     if (categories.length > 0 && !categories.find((c) => c.id === transactionForm.categoryId)) {

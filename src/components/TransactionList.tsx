@@ -9,13 +9,19 @@ interface TransactionListProps {
   categories: Category[]
   primaryCurrency: Currency
   rates: Record<Currency, number>
+  title?: string
+  showViewAll?: boolean
+  viewAllPath?: string
 }
 
 const TransactionList = ({
   transactions,
   categories,
   primaryCurrency: _primaryCurrency,
-  rates: _rates
+  rates: _rates,
+  title = 'Recent Transactions',
+  showViewAll = false,
+  viewAllPath = '/transactions/all'
 }: TransactionListProps) => {
   const navigate = useNavigate()
 
@@ -23,10 +29,24 @@ const TransactionList = ({
     navigate(`/transactions/${transactionId}`)
   }
 
+  const handleViewAllClick = () => {
+    navigate(viewAllPath)
+  }
+
   return (
     <article className="transaction-list">
       <header className="transaction-list__header">
-        <h2>Recent Transactions</h2>
+        <h2>{title}</h2>
+        {showViewAll && (
+          <button
+            type="button"
+            className="transaction-list__view-all-button"
+            onClick={handleViewAllClick}
+            aria-label="View all transactions"
+          >
+            View all
+          </button>
+        )}
       </header>
       <ul>
         {transactions.map((transaction) => {

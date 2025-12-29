@@ -992,6 +992,9 @@ body::after {
 
 .transaction-list__header {
   margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .transaction-list h2 {
@@ -1001,6 +1004,30 @@ body::after {
   text-transform: uppercase;
   color: rgba(94, 234, 212, 0.9);
   margin: 0;
+}
+
+.transaction-list__view-all-button {
+  background: transparent;
+  border: none;
+  color: rgba(94, 234, 212, 0.9);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.transaction-list__view-all-button:hover {
+  background: rgba(94, 234, 212, 0.1);
+  color: rgba(94, 234, 212, 1);
+}
+
+.transaction-list__view-all-button:focus {
+  outline: 2px solid rgba(94, 234, 212, 0.5);
+  outline-offset: 2px;
 }
 
 .transaction-list ul {
@@ -1513,7 +1540,7 @@ body::after {
 
 @media (min-width: 768px) {
   .finance-app {
-    padding: 2rem 1.25rem 3rem;
+    padding: 2rem 1.25rem 6rem;
   }
 
   .glass-card {
