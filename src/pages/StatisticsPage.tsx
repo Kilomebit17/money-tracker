@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -30,8 +31,7 @@ import "swiper/css/navigation";
 // @ts-expect-error - CSS imports don't have type declarations
 import "swiper/css/pagination";
 
-type StatisticsPeriod = "day" | "month" | "year";
-type ComparisonPeriod = "previous" | "sameLastYear";
+export type StatisticsPeriod = "day" | "month" | "year";
 
 interface CategoryStats {
   id: string;
@@ -42,17 +42,11 @@ interface CategoryStats {
   percentage: number;
 }
 
-interface PeriodComparison {
-  incomeChange: number;
-  expenseChange: number;
-  balanceChange: number;
-  comparisonPeriodLabel: string;
-}
-
 const StatisticsPage = (): ReactElement => {
   const [selectedPeriod, setSelectedPeriod] = useState<StatisticsPeriod>("month");
   const [currentPeriodDate, setCurrentPeriodDate] = useState<Date>(new Date());
-  const [comparisonPeriod, setComparisonPeriod] = useState<ComparisonPeriod>("previous");
+  const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
+  const navigate = useNavigate();
   const { webApp } = useTelegram();
   const { transactions, categories, primaryCurrency } = useFinance();
   const { rates } = useExchangeRates();
@@ -64,7 +58,7 @@ const StatisticsPage = (): ReactElement => {
   };
   const activeRates = rates ?? fallbackRates;
 
-  const { stats, comparison } = useMemo(() => {
+  const stats = useMemo(() => {
     let periodStart: Date;
     let periodEnd: Date;
 
@@ -118,8 +112,6 @@ const StatisticsPage = (): ReactElement => {
       }
       return sum;
     }, 0);
-
-    const balance = totalIncome - totalExpenses;
 
     // Calculate category stats for income
     const incomeCategories = categories.map((category) => {
@@ -197,122 +189,13 @@ const StatisticsPage = (): ReactElement => {
         percentage: totalExpenses > 0 ? (cat.total / totalExpenses) * 100 : 0,
       }));
 
-    // Calculate comparison with previous period
-    let comparisonData: PeriodComparison | null = null;
-    
-    let prevPeriodStart: Date;
-    let prevPeriodEnd: Date;
-    let comparisonPeriodLabel: string;
-
-    if (comparisonPeriod === "previous") {
-      // Compare with previous same period
-      switch (selectedPeriod) {
-        case "day": {
-          const prevDay = subDays(currentPeriodDate, 1);
-          prevPeriodStart = startOfDay(prevDay);
-          prevPeriodEnd = new Date(prevDay);
-          prevPeriodEnd.setHours(23, 59, 59, 999);
-          comparisonPeriodLabel = "vs Previous Day";
-          break;
-        }
-        case "month": {
-          const prevMonth = subMonths(currentPeriodDate, 1);
-          prevPeriodStart = startOfMonth(prevMonth);
-          prevPeriodEnd = endOfMonth(prevMonth);
-          comparisonPeriodLabel = "vs Previous Month";
-          break;
-        }
-        case "year": {
-          const prevYear = subYears(currentPeriodDate, 1);
-          prevPeriodStart = startOfYear(prevYear);
-          prevPeriodEnd = endOfYear(prevYear);
-          comparisonPeriodLabel = "vs Previous Year";
-          break;
-        }
-        default: {
-          const prevMonth = subMonths(currentPeriodDate, 1);
-          prevPeriodStart = startOfMonth(prevMonth);
-          prevPeriodEnd = endOfMonth(prevMonth);
-          comparisonPeriodLabel = "vs Previous Month";
-        }
-      }
-    } else {
-      // Compare with same period last year (only for month and year)
-      if (selectedPeriod === "day") {
-        // For day, fallback to previous day
-        const prevDay = subDays(currentPeriodDate, 1);
-        prevPeriodStart = startOfDay(prevDay);
-        prevPeriodEnd = new Date(prevDay);
-        prevPeriodEnd.setHours(23, 59, 59, 999);
-        comparisonPeriodLabel = "vs Previous Day";
-      } else if (selectedPeriod === "month") {
-        const sameMonthLastYear = subYears(currentPeriodDate, 1);
-        prevPeriodStart = startOfMonth(sameMonthLastYear);
-        prevPeriodEnd = endOfMonth(sameMonthLastYear);
-        comparisonPeriodLabel = "vs Same Month Last Year";
-      } else {
-        const prevYear = subYears(currentPeriodDate, 1);
-        prevPeriodStart = startOfYear(prevYear);
-        prevPeriodEnd = endOfYear(prevYear);
-        comparisonPeriodLabel = "vs Previous Year";
-      }
-    }
-
-    const prevPeriodTransactions = transactions.filter((transaction) => {
-      const transactionDate = new Date(transaction.date);
-      return transactionDate >= prevPeriodStart && transactionDate <= prevPeriodEnd;
-    });
-
-    const prevPeriodIncome = prevPeriodTransactions.reduce((sum, transaction) => {
-      if (transaction.type === "income") {
-        return (
-          sum +
-          convertCurrency(
-            transaction.usdValueAtEntry,
-            "USD",
-            primaryCurrency,
-            activeRates
-          )
-        );
-      }
-      return sum;
-    }, 0);
-
-    const prevPeriodExpenses = prevPeriodTransactions.reduce((sum, transaction) => {
-      if (transaction.type === "expense") {
-        return (
-          sum +
-          convertCurrency(
-            transaction.usdValueAtEntry,
-            "USD",
-            primaryCurrency,
-            activeRates
-          )
-        );
-      }
-      return sum;
-    }, 0);
-
-    const prevPeriodBalance = prevPeriodIncome - prevPeriodExpenses;
-
-    comparisonData = {
-      incomeChange: prevPeriodIncome > 0 ? ((totalIncome - prevPeriodIncome) / prevPeriodIncome) * 100 : 0,
-      expenseChange: prevPeriodExpenses > 0 ? ((totalExpenses - prevPeriodExpenses) / prevPeriodExpenses) * 100 : 0,
-      balanceChange: balance - prevPeriodBalance,
-      comparisonPeriodLabel,
-    };
-
     return {
-      stats: {
-        totalIncome,
-        totalExpenses,
-        balance,
-        categoryIncome,
-        categoryExpenses,
-      },
-      comparison: comparisonData,
+      totalIncome,
+      totalExpenses,
+      categoryIncome,
+      categoryExpenses,
     };
-  }, [transactions, categories, selectedPeriod, currentPeriodDate, comparisonPeriod, primaryCurrency, activeRates]);
+  }, [transactions, categories, selectedPeriod, currentPeriodDate, primaryCurrency, activeRates]);
 
   const handlePeriodChange = (period: StatisticsPeriod) => {
     triggerHaptic(webApp, "selection");
@@ -382,9 +265,19 @@ const StatisticsPage = (): ReactElement => {
     }
   }, [selectedPeriod, currentPeriodDate]);
 
-  const formatChange = (change: number): string => {
-    const sign = change >= 0 ? "+" : "";
-    return `${sign}${change.toFixed(1)}%`;
+  const handleCategoryClick = (category: CategoryStats, transactionType: "income" | "expense") => {
+    triggerHaptic(webApp, "impact", "light");
+    navigate("/transactions/category", {
+      state: {
+        categoryId: category.id,
+        categoryName: category.name,
+        categoryIcon: category.icon,
+        categoryColor: category.color,
+        period: selectedPeriod,
+        periodDate: currentPeriodDate,
+        transactionType,
+      },
+    });
   };
 
   return (
@@ -455,119 +348,54 @@ const StatisticsPage = (): ReactElement => {
             slidesPerView={1}
             pagination={{ clickable: true }}
             className="statistics-card__swiper"
+            onSlideChange={(swiper) => setActiveSlideIndex(swiper.activeIndex)}
+            initialSlide={0}
           >
             <SwiperSlide>
-              <div className="statistics-card__slide statistics-card__slide--income">
-                <div className="statistics-card__slide-label">Income</div>
-                <div className="statistics-card__slide-amount">
-                  {formatCurrency(stats.totalIncome, primaryCurrency)}
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
               <div className="statistics-card__slide statistics-card__slide--expense">
-                <div className="statistics-card__slide-label">Expenses</div>
+                <div className="statistics-card__slide-label">Total Expenses</div>
                 <div className="statistics-card__slide-amount">
                   {formatCurrency(stats.totalExpenses, primaryCurrency)}
                 </div>
               </div>
             </SwiperSlide>
             <SwiperSlide>
-              <div className="statistics-card__slide statistics-card__slide--balance">
-                <div className="statistics-card__slide-label">Balance</div>
+              <div className="statistics-card__slide statistics-card__slide--income">
+                <div className="statistics-card__slide-label">Total Income</div>
                 <div className="statistics-card__slide-amount">
-                  {stats.balance >= 0 ? "+" : ""}
-                  {formatCurrency(Math.abs(stats.balance), primaryCurrency)}
+                  {formatCurrency(stats.totalIncome, primaryCurrency)}
                 </div>
               </div>
             </SwiperSlide>
           </Swiper>
         </div>
 
-        {comparison && (
-          <div className="statistics-card__comparison">
-            <div className="statistics-card__comparison-header">
-              <div className="statistics-card__comparison-title">{comparison.comparisonPeriodLabel}</div>
-              <select
-                className="statistics-card__comparison-select"
-                value={comparisonPeriod}
-                onChange={(e) => {
-                  triggerHaptic(webApp, "selection");
-                  setComparisonPeriod(e.target.value as ComparisonPeriod);
-                }}
-                aria-label="Comparison period"
-              >
-                <option value="previous">Previous</option>
-                {selectedPeriod !== "day" && (
-                  <option value="sameLastYear">Same Last Year</option>
-                )}
-              </select>
-            </div>
-            <div className="statistics-card__comparison-items">
-              <div className="statistics-card__comparison-item">
-                <span className="statistics-card__comparison-label">Income</span>
-                <span
-                  className={`statistics-card__comparison-value ${
-                    comparison.incomeChange >= 0
-                      ? "statistics-card__comparison-value--positive"
-                      : "statistics-card__comparison-value--negative"
-                  }`}
-                >
-                  {formatChange(comparison.incomeChange)}
-                </span>
-              </div>
-              <div className="statistics-card__comparison-item">
-                <span className="statistics-card__comparison-label">Expenses</span>
-                <span
-                  className={`statistics-card__comparison-value ${
-                    comparison.expenseChange <= 0
-                      ? "statistics-card__comparison-value--positive"
-                      : "statistics-card__comparison-value--negative"
-                  }`}
-                >
-                  {formatChange(comparison.expenseChange)}
-                </span>
-              </div>
-              <div className="statistics-card__comparison-item">
-                <span className="statistics-card__comparison-label">Balance</span>
-                <span
-                  className={`statistics-card__comparison-value ${
-                    comparison.balanceChange >= 0
-                      ? "statistics-card__comparison-value--positive"
-                      : "statistics-card__comparison-value--negative"
-                  }`}
-                >
-                  {comparison.balanceChange >= 0 ? "+" : ""}
-                  {formatCurrency(Math.abs(comparison.balanceChange), primaryCurrency)}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {stats.categoryIncome.length > 0 && (
+        {activeSlideIndex === 0 && stats.categoryExpenses.length > 0 && (
           <div className="statistics-card__categories-section">
-            <div className="statistics-card__categories-title">Income by Category</div>
             <div className="statistics-card__categories">
-              {stats.categoryIncome.map((category) => (
-                <div key={category.id} className="statistics-card__category-item">
-                  <div className="statistics-card__category-header">
-                    <div className="statistics-card__category-info">
-                      <span className="statistics-card__category-icon">{category.icon}</span>
-                      <span className="statistics-card__category-name">{category.name}</span>
-                    </div>
-                    <span className="statistics-card__category-amount">
-                      {formatCurrency(category.total, primaryCurrency)}
-                    </span>
+              {stats.categoryExpenses.map((category) => (
+                <div
+                  key={category.id}
+                  className="statistics-card__category-card statistics-card__category-card--clickable"
+                  onClick={() => handleCategoryClick(category, "expense")}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleCategoryClick(category, "expense");
+                    }
+                  }}
+                  aria-label={`View ${category.name} transactions`}
+                >
+                  <div className="statistics-card__category-card-icon" style={{ backgroundColor: `${category.color}20`, color: category.color }}>
+                    {category.icon}
                   </div>
-                  <div className="statistics-card__category-progress-bar">
-                    <div
-                      className="statistics-card__category-progress-fill"
-                      style={{
-                        width: `${category.percentage}%`,
-                        backgroundColor: category.color,
-                      }}
-                    />
+                  <div className="statistics-card__category-card-content">
+                    <div className="statistics-card__category-card-name">{category.name}</div>
+                    <div className="statistics-card__category-card-amount">
+                      {formatCurrency(category.total, primaryCurrency)}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -575,29 +403,32 @@ const StatisticsPage = (): ReactElement => {
           </div>
         )}
 
-        {stats.categoryExpenses.length > 0 && (
+        {activeSlideIndex === 1 && stats.categoryIncome.length > 0 && (
           <div className="statistics-card__categories-section">
-            <div className="statistics-card__categories-title">Expenses by Category</div>
             <div className="statistics-card__categories">
-              {stats.categoryExpenses.map((category) => (
-                <div key={category.id} className="statistics-card__category-item">
-                  <div className="statistics-card__category-header">
-                    <div className="statistics-card__category-info">
-                      <span className="statistics-card__category-icon">{category.icon}</span>
-                      <span className="statistics-card__category-name">{category.name}</span>
-                    </div>
-                    <span className="statistics-card__category-amount">
-                      {formatCurrency(category.total, primaryCurrency)}
-                    </span>
+              {stats.categoryIncome.map((category) => (
+                <div
+                  key={category.id}
+                  className="statistics-card__category-card statistics-card__category-card--clickable"
+                  onClick={() => handleCategoryClick(category, "income")}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleCategoryClick(category, "income");
+                    }
+                  }}
+                  aria-label={`View ${category.name} transactions`}
+                >
+                  <div className="statistics-card__category-card-icon" style={{ backgroundColor: `${category.color}20`, color: category.color }}>
+                    {category.icon}
                   </div>
-                  <div className="statistics-card__category-progress-bar">
-                    <div
-                      className="statistics-card__category-progress-fill"
-                      style={{
-                        width: `${category.percentage}%`,
-                        backgroundColor: category.color,
-                      }}
-                    />
+                  <div className="statistics-card__category-card-content">
+                    <div className="statistics-card__category-card-name">{category.name}</div>
+                    <div className="statistics-card__category-card-amount">
+                      {formatCurrency(category.total, primaryCurrency)}
+                    </div>
                   </div>
                 </div>
               ))}
