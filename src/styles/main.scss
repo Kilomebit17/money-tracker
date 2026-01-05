@@ -1137,6 +1137,49 @@ body::after {
   border-radius: 8px;
 }
 
+.transaction-list__progress-wrapper {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.transaction-list__progress-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transaction-list__progress-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted-var);
+}
+
+.transaction-list__progress-bar {
+  width: 100%;
+  height: 20px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.transaction-list__progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.transaction-list__progress-fill--income {
+  background: #00A48B;
+}
+
+.transaction-list__progress-fill--expense {
+  background: #FE015A;
+}
+
 .transaction-page__back-button {
   border: none;
   background: rgba(255, 255, 255, 0.08);
@@ -1434,6 +1477,647 @@ body::after {
 .settings-item__button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.statistics-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.statistics-card {
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.statistics-card__header {
+  margin-bottom: 1rem;
+}
+
+.statistics-card__tabs {
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.25rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.statistics-card__tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-muted-var);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.statistics-card__tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.statistics-card__tab--active {
+  background: rgba(94, 234, 212, 0.2);
+  color: rgba(94, 234, 212, 1);
+  font-weight: 600;
+}
+
+.statistics-card__stats-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.statistics-card__period-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.statistics-card__period-nav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.statistics-card__period-label {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-color);
+  text-align: center;
+  flex: 1;
+}
+
+.statistics-card__swiper-wrapper {
+  margin-bottom: 1.5rem;
+  
+  .swiper {
+    padding-bottom: 2rem;
+  }
+  
+  .swiper-pagination {
+    bottom: 0;
+  }
+  
+  .swiper-pagination-bullet {
+    background: rgba(255, 255, 255, 0.3);
+    opacity: 1;
+    
+    &.swiper-pagination-bullet-active {
+      background: rgba(94, 234, 212, 1);
+    }
+  }
+}
+
+.statistics-card__slide {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-height: 140px;
+  justify-content: center;
+}
+
+.statistics-card__slide-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted-var);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statistics-card__slide-amount {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.statistics-card__slide--income {
+  border-color: rgba(0, 164, 139, 0.3);
+  background: rgba(0, 164, 139, 0.08);
+}
+
+.statistics-card__slide--expense {
+  border-color: rgba(254, 1, 90, 0.3);
+  background: rgba(254, 1, 90, 0.08);
+}
+
+.statistics-card__slide--balance {
+  border-color: rgba(94, 234, 212, 0.3);
+  background: rgba(94, 234, 212, 0.08);
+}
+
+.statistics-card__comparison {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.statistics-card__comparison-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.statistics-card__comparison-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted-var);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex: 1;
+}
+
+.statistics-card__comparison-select {
+  border-radius: 0.7rem;
+  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-color);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8125rem;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  min-width: 120px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: rgba(94, 234, 212, 0.5);
+  }
+
+  option {
+    background: rgb(18, 22, 35);
+    color: var(--text-color);
+  }
+}
+
+.statistics-card__comparison-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.statistics-card__comparison-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statistics-card__comparison-label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.statistics-card__comparison-value {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.statistics-card__comparison-value--positive {
+  color: rgba(74, 222, 128, 1);
+}
+
+.statistics-card__comparison-value--negative {
+  color: rgba(251, 113, 133, 1);
+}
+
+.statistics-card__categories-section {
+  margin-bottom: 1.5rem;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.statistics-card__categories-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(94, 234, 212, 0.9);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statistics-card__stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0.5rem;
+}
+
+.statistics-card__stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.statistics-card__stat-label {
+  font-size: 0.875rem;
+  color: var(--text-muted-var);
+  font-weight: 500;
+}
+
+.statistics-card__stat-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.statistics-card__progress-wrapper {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.statistics-card__progress-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statistics-card__progress-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted-var);
+}
+
+.statistics-card__progress-bar {
+  width: 100%;
+  height: 20px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.statistics-card__progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.statistics-card__progress-fill--income {
+  background: #00A48B;
+}
+
+.statistics-card__progress-fill--expense {
+  background: #FE015A;
+}
+
+.statistics-card__categories {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.statistics-card__category-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.statistics-card__category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statistics-card__category-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.statistics-card__category-icon {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+.statistics-card__category-name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.statistics-card__category-amount {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-color);
+  letter-spacing: -0.01em;
+}
+
+.statistics-card__category-progress-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.statistics-card__category-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.statistics-card__chart-container {
+  width: 100%;
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.statistics-card__progress {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.statistics-card__progress-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statistics-card__progress-label {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.statistics-card__progress-label--income {
+  color: #34d275;
+}
+
+.statistics-card__progress-label--expense {
+  color: #ef4444;
+}
+
+.statistics-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.statistics-card__loading {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted-var);
+}
+
+.statistics-card__empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted-var);
+}
+
+.statistics-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.statistics-section__title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(94, 234, 212, 0.9);
+}
+
+.statistics-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.statistics-summary__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.statistics-summary__item--income {
+  border-color: rgba(74, 222, 128, 0.3);
+  background: rgba(74, 222, 128, 0.08);
+}
+
+.statistics-summary__item--expense {
+  border-color: rgba(251, 113, 133, 0.3);
+  background: rgba(251, 113, 133, 0.08);
+}
+
+.statistics-summary__item--net.statistics-summary__item--positive {
+  border-color: rgba(74, 222, 128, 0.3);
+  background: rgba(74, 222, 128, 0.08);
+}
+
+.statistics-summary__item--net.statistics-summary__item--negative {
+  border-color: rgba(251, 113, 133, 0.3);
+  background: rgba(251, 113, 133, 0.08);
+}
+
+.statistics-summary__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted-var);
+}
+
+.statistics-summary__value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-color);
+  letter-spacing: -0.01em;
+}
+
+.statistics-monthly {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.statistics-monthly__item {
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.statistics-monthly__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.statistics-monthly__month {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.statistics-monthly__net {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.statistics-monthly__net--positive {
+  color: rgba(74, 222, 128, 1);
+}
+
+.statistics-monthly__net--negative {
+  color: rgba(251, 113, 133, 1);
+}
+
+.statistics-monthly__details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.statistics-monthly__detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.statistics-monthly__detail-label {
+  color: var(--text-muted-var);
+}
+
+.statistics-monthly__detail-value {
+  font-weight: 500;
+}
+
+.statistics-monthly__detail-value--income {
+  color: rgba(74, 222, 128, 0.9);
+}
+
+.statistics-monthly__detail-value--expense {
+  color: rgba(251, 113, 133, 0.9);
+}
+
+.statistics-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.statistics-category {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.statistics-category__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statistics-category__info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.statistics-category__icon {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+.statistics-category__name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.statistics-category__amount {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-color);
+  letter-spacing: -0.01em;
+}
+
+.statistics-category__bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.statistics-category__bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.statistics-category__percentage {
+  font-size: 0.8125rem;
+  color: var(--text-muted-var);
+  align-self: flex-end;
 }
 
 .theme-switch {

@@ -1,12 +1,13 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import type { ReactElement } from "react";
-import { HiHome, HiDocumentText, HiCog6Tooth } from "react-icons/hi2";
+import { HiHome, HiDocumentText, HiChartBarSquare, HiCog6Tooth } from "react-icons/hi2";
 import { useTelegram } from "../providers/TelegramProvider";
 import { triggerHaptic } from "../utils/haptic";
 
 const navigation: Array<{ path: string; label: string; icon: ReactElement }> = [
   { path: "/", label: "Overview", icon: <HiHome /> },
   { path: "/transactions", label: "Transactions", icon: <HiDocumentText /> },
+  { path: "/statistics", label: "Statistics", icon: <HiChartBarSquare /> },
   // { path: "/categories", label: "Budgets", icon: <BudgetsIcon /> },
   { path: "/settings", label: "Settings", icon: <HiCog6Tooth /> },
 ];
