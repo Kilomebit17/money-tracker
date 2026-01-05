@@ -67,7 +67,7 @@ describe('BottomNav', () => {
     const { container } = renderWithRouter()
 
     const icons = container.querySelectorAll('.bottom-nav__icon')
-    expect(icons.length).toBe(3) // Overview, Transactions, Settings
+    expect(icons.length).toBe(4) // Overview, Transactions, Statistics, Settings
   })
 })
 
